@@ -2,6 +2,8 @@
 
 An AI life coach for young adults aged 16-25. Helps users build independence through structured coaching journeys.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Venersiss/alex-ai-coach)
+
 ## Quick Start
 
 ```bash
@@ -24,12 +26,13 @@ Open **http://localhost:5000** in your browser.
 python test_e2e.py
 ```
 
-## Deploy
+## Deploy to Render
 
-This is a Flask app. Deploy to any platform that supports Python:
+1. Click the **Deploy to Render** button above
+2. Sign in with GitHub
+3. Set `GOOGLE_API_KEY` to your Gemini API key
+4. Click **Apply** — Render deploys automatically
 
-- **Render**: Connect GitHub repo → auto-deploy
-- **Railway**: `railway up`
-- **Any VPS**: `python server.py` behind nginx
+After deployment, you'll get a public URL like `alex-ai-coach.onrender.com`.
 
-Set `GOOGLE_API_KEY` as an environment variable on your hosting platform.
+Every `git push` to `master` redeploys automatically.
