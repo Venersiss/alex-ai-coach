@@ -1,0 +1,360 @@
+{
+  "_schema": "alex_decision_tree_v2",
+  "_note": "Refined in Session 2 — expanded from 6 to 12 questions with detailed YES/NO branches and cash/transport tiers",
+  "tree_id": "emergency_independence_v2",
+  "title": "Emergency Independence — Kicked Out (Session 2 Refined)",
+  "trigger_phrases": [
+    "kicked out",
+    "thrown out",
+    "asked to leave",
+    "homeless",
+    "no home",
+    "no place to stay",
+    "no place to live",
+    "on the street",
+    "need shelter",
+    "kicked me out",
+    "got kicked out"
+  ],
+  "freemium": true,
+  "root_node": "q1_danger",
+
+  "nodes": [
+    {
+      "id": "q1_danger",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "I'm sorry that happened. You don't have to tell me why, but I need to know: Are you in physical danger right now?",
+      "options": [
+        { "label": "Yes", "next_node": "msg_hotlines" },
+        { "label": "No", "next_node": "q2_trusted" }
+      ],
+      "why_alex_asks": "Physical safety overrides everything. If in danger, coaching stops and crisis resources deploy immediately.",
+      "save_to_life_map": { "field": "crisis.in_danger", "source": "answer" }
+    },
+
+    {
+      "id": "msg_hotlines",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "You matter. Please reach out to one of these right now. I'll wait.\n- 988 Suicide & Crisis Lifeline\n- National Safeline: 1-800-799-7233\n- Youth Shelter Finder\n\nReply 'done' when you've contacted one.",
+      "resources": [
+        { "label": "988 Suicide & Crisis Lifeline", "url": "tel:988", "type": "hotline" },
+        { "label": "National Safeline", "url": "tel:1-800-799-7233", "type": "hotline" },
+        { "label": "Youth Shelter Finder", "url": "https://www.youthshelterfinder.org", "type": "web" }
+      ],
+      "wait_for_reply": "done",
+      "next_node": "q2_trusted",
+      "save_to_life_map": { "field": "crisis.hotline_contacted", "value": true }
+    },
+
+    {
+      "id": "q2_trusted",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Are you with someone you trust right now?",
+      "options": [
+        { "label": "Yes", "next_node": "q3_shelter" },
+        { "label": "No", "next_node": "q3_shelter" }
+      ],
+      "why_alex_asks": "A trusted person nearby changes the immediate risk profile. If alone and in danger, urgency increases. Added in Session 2.",
+      "save_to_life_map": { "field": "crisis.with_trusted_person", "source": "answer" }
+    },
+
+    {
+      "id": "q3_shelter",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Do you have a safe place to sleep tonight?",
+      "options": [
+        { "label": "Yes", "next_node": "q4_minor" },
+        { "label": "No", "next_node": "msg_shelter" },
+        { "label": "Not sure", "next_node": "msg_shelter" }
+      ],
+      "why_alex_asks": "Tonight's shelter is the most immediate practical need after safety.",
+      "save_to_life_map": { "field": "crisis.immediate_shelter", "source": "answer" }
+    },
+
+    {
+      "id": "msg_shelter",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Let's find one. Use Youth Shelter Finder below, or reply with your city.\n\nIf you have a car: 24hr Walmart or truck stop parking lots.\nIf you don't: 24hr diners, hospital waiting rooms, library lobbies if open.",
+      "resources": [
+        { "label": "Youth Shelter Finder", "url": "https://www.youthshelterfinder.org", "type": "web" },
+        { "label": "Call 211", "url": "tel:211", "type": "hotline" }
+      ],
+      "next_node": "q4_minor"
+    },
+
+    {
+      "id": "q4_minor",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Are you under 18?",
+      "options": [
+        { "label": "Yes, under 18", "next_node": "msg_minor" },
+        { "label": "No, 18 or older", "next_node": "q5_id" }
+      ],
+      "why_alex_asks": "Minors have different legal protections and mandatory reporting requirements. Coaching path changes significantly for minors.",
+      "save_to_life_map": { "field": "crisis.is_minor", "source": "answer" }
+    },
+
+    {
+      "id": "msg_minor",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Because you're a minor, in some states I'm required to report this. I want to help you do this safely.\n\nLet's find a trusted adult — teacher, counselor, relative, or friend's parent. You can also contact:\n- National Runaway Safeline: 1-800-RUNAWAY\n- Your school counselor\n\nSay 'ready' when you want to continue the plan.",
+      "resources": [
+        { "label": "National Runaway Safeline", "url": "https://www.1800runaway.org", "type": "web" },
+        { "label": "Runaway Hotline", "url": "tel:1-800-786-2929", "type": "hotline" }
+      ],
+      "wait_for_reply": "ready",
+      "next_node": "q5_id"
+    },
+
+    {
+      "id": "q5_id",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Do you have any form of ID with you? (Driver's license, passport, birth certificate, school ID, social security card)",
+      "options": [
+        { "label": "Yes, at least one", "next_node": "q6_phone" },
+        { "label": "No, nothing", "next_node": "msg_id_replace" }
+      ],
+      "why_alex_asks": "Without ID, nearly every service (SNAP, Medicaid, jobs, bank accounts, housing) is inaccessible. Replacing ID is the #1 Day 1 priority.",
+      "save_to_life_map": { "field": "crisis.has_idsafe", "source": "answer" }
+    },
+
+    {
+      "id": "msg_id_replace",
+      "type": "message",
+      "priority": 2,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "That's okay, we can replace them. This is your top priority for Day 1.\n\n1. Replace birth certificate (state vital records)\n2. Get state ID card (DMV — cheaper than license)\n3. Replace SS card (ssa.gov — free)\n\nReply with your state and I'll give you exact links.",
+      "resources": [
+        { "label": "Social Security Card", "url": "https://www.ssa.gov/myaccount", "type": "web" },
+        { "label": "State Vital Records", "url": "https://www.cdc.gov/nchs/w2w/index.htm", "type": "web" },
+        { "label": "Find your DMV", "url": "https://www.dmv.org", "type": "web" }
+      ],
+      "next_node": "q6_phone"
+    },
+
+    {
+      "id": "q6_phone",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Is your phone working with service?",
+      "options": [
+        { "label": "Yes", "next_node": "q7_money" },
+        { "label": "No", "next_node": "q7_money" }
+      ],
+      "why_alex_asks": "A working phone is the lifeline — job applications, benefit applications, shelter calls, navigation. Added in Session 2.",
+      "save_to_life_map": { "field": "crisis.has_phone", "source": "answer" }
+    },
+
+    {
+      "id": "q7_money",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "How much money do you have right now?",
+      "options": [
+        { "label": "$0", "next_node": "q8_transport" },
+        { "label": "$1-100", "next_node": "q8_transport" },
+        { "label": "$100+", "next_node": "q8_transport" }
+      ],
+      "why_alex_asks": "Determines immediate survival window. $0 = same-day cash priority. $100+ = focus on stabilization.",
+      "cash_tier": { "source": "answer" },
+      "save_to_life_map": { "field": "crisis.liquid_cash", "source": "answer" }
+    },
+
+    {
+      "id": "q8_transport",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "What transportation do you have?",
+      "options": [
+        { "label": "Car", "next_node": "q9_job" },
+        { "label": "Bus pass", "next_node": "q9_job" },
+        { "label": "Bike", "next_node": "q9_job" },
+        { "label": "None", "next_node": "q9_job" },
+        { "label": "Friends can drive", "next_node": "q9_job" }
+      ],
+      "why_alex_asks": "Transportation dictates which jobs, shelters, and services are accessible. Car = gig apps. None = remote-only.",
+      "save_to_life_map": { "field": "crisis.transportation", "source": "answer" }
+    },
+
+    {
+      "id": "q9_job",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Are you currently working?",
+      "options": [
+        { "label": "Yes", "next_node": "q10_bank" },
+        { "label": "No", "next_node": "q10_bank" }
+      ],
+      "why_alex_asks": "Determines whether to deploy employment path or simply stabilize existing income.",
+      "save_to_life_map": { "field": "employment.has_job", "source": "answer" }
+    },
+
+    {
+      "id": "q10_bank",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Do you have a bank account?",
+      "options": [
+        { "label": "Yes", "next_node": "q11_city" },
+        { "label": "No", "next_node": "q11_city" }
+      ],
+      "why_alex_asks": "A bank account is required for direct deposit, benefit payments, and financial independence.",
+      "save_to_life_map": { "field": "crisis.has_bank_account", "source": "answer" }
+    },
+
+    {
+      "id": "q11_city",
+      "type": "question",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "What city are you in? (I never save your exact address — just city and state so I can give you local resources.)",
+      "options": [],
+      "why_alex_asks": "All resources are location-dependent. Added in Session 2. Alex never stores exact addresses.",
+      "next_node": "q12_education",
+      "save_to_life_map": { "field": "profile.city", "source": "answer" }
+    },
+
+    {
+      "id": "q12_education",
+      "type": "question",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "What's your education level?",
+      "options": [
+        { "label": "Some high school", "next_node": "plan_72hr" },
+        { "label": "High school diploma/GED", "next_node": "plan_72hr" },
+        { "label": "Some college", "next_node": "plan_72hr" },
+        { "label": "Associate's", "next_node": "plan_72hr" },
+        { "label": "Bachelor's+", "next_node": "plan_72hr" }
+      ],
+      "why_alex_asks": "Shapes employment path. No diploma = Job Corps priority. Some college = better temp placement.",
+      "save_to_life_map": { "field": "education.level", "source": "answer" }
+    },
+
+    {
+      "id": "plan_72hr",
+      "type": "action_plan",
+      "priority": 2,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Here's your 72-hour stabilization plan. Your only job is survival. Check off each item as you go.",
+      "tasks": [
+        { "day": 0, "task": "Secure shelter for tonight", "condition": "crisis.immediate_shelter != yes" },
+        { "day": 1, "task": "Replace at least one form of ID", "condition": "crisis.has_idsafe == false" },
+        { "day": 1, "task": "Apply for SNAP (food stamps)", "resource": { "label": "SNAP state finder", "url": "https://www.fns.usda.gov/snap/state-directory" } },
+        { "day": 1, "task": "Get a mailing address (P.O. Box or General Delivery)", "resource": { "label": "USPS P.O. Box", "url": "https://www.usps.com/manage/po-boxes.htm" } },
+        { "day": 2, "task": "Apply for Medicaid / health coverage", "resource": { "label": "Healthcare.gov", "url": "https://www.healthcare.gov" } },
+        { "day": 2, "task": "Open a free bank account", "condition": "crisis.has_bank_account == false", "resource": { "label": "Chime", "url": "https://www.chime.com" } },
+        { "day": 3, "task": "Call 211 for local housing assistance", "resource": { "label": "211", "url": "tel:211" } },
+        { "day": 3, "task": "Apply for Job Corps (if 16-24)", "resource": { "label": "Job Corps", "url": "https://www.jobcorps.gov" } }
+      ],
+      "next_node": "plan_employment",
+      "save_to_life_map": { "field": "plan.72hr_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "plan_employment",
+      "type": "action_plan",
+      "priority": 3,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Once you're stable, let's get income coming in. Pick the lane that fits:",
+      "tasks": [
+        { "day": "immediate", "task": "Gig apps — DoorDash, Instacart, TaskRabbit — start earning in 24-48h", "condition": "crisis.transportation == Car" },
+        { "day": "immediate", "task": "Online gigs — Uber Eats bike, Rover, Fiverr, UserTesting", "condition": "crisis.transportation != Car" },
+        { "day": 7, "task": "Temp agency — Robert Half, Express Employment — same-week start" },
+        { "day": 7, "task": "Walk-in applications — restaurants, retail, hospitality" },
+        { "day": 30, "task": "Full-time with benefits", "condition": "crisis.has_idsafe == true" }
+      ],
+      "next_node": "plan_housing",
+      "save_to_life_map": { "field": "plan.employment_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "plan_housing",
+      "type": "action_plan",
+      "priority": 3,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Housing is a ladder. Here are your options from fastest to most stable:",
+      "tasks": [
+        { "day": "week_1", "task": "Emergency shelter", "resource": { "label": "Shelter finder", "url": "https://www.homelessshelterdirectory.org" } },
+        { "day": "week_1", "task": "Rapid rehousing (HUD-funded, case worker assigned)", "resource": { "label": "HUD rapid rehousing", "url": "https://www.hudexchange.info/homelessness-assistance" } },
+        { "day": "week_1-2", "task": "Couch surf with friend/host home", "premium": true },
+        { "day": "week_2-4", "task": "Find roommates", "resource": { "label": "Roomster", "url": "https://www.roomster.com" } },
+        { "day": "month_2+", "task": "Own rental — requires income, deposit, credit", "premium": true }
+      ],
+      "next_node": "gate_upgrade",
+      "save_to_life_map": { "field": "plan.housing_path_chosen", "source": "user_selection", "timestamp": true }
+    },
+
+    {
+      "id": "gate_upgrade",
+      "type": "upgrade_gate",
+      "priority": 3,
+      "tier": "premium",
+      "speaker": "alex",
+      "text": "You've done the hard part — you're stable and moving forward. Here's what's available free vs. premium:",
+      "free_continues": "plan_ongoing",
+      "premium_features": [
+        { "id": "premium_mediation", "label": "Family mediation script", "description": "Exactly what to say to negotiate with parents/family" },
+        { "id": "premium_legal", "label": "Legal rights guide", "description": "Tenant rights, eviction laws, emancipation (state-specific)" },
+        { "id": "premium_lease", "label": "Lease-readiness score", "description": "Landlord communication coach + credit-building plan" },
+        { "id": "premium_weekly", "label": "Weekly 1:1 check-in", "description": "Personal coach, emotional check, progress review" }
+      ],
+      "upgrade_node": "premium_welcome"
+    },
+
+    {
+      "id": "plan_ongoing",
+      "type": "message",
+      "priority": 4,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "You're on your way. Life Map saved. Weekly check-ins enabled.\n\nGetting kicked out is not your fault. You didn't fail. We'll get through this one checkbox at a time.\n\nReply 'check-in' anytime.",
+      "save_to_life_map": { "field": "crisis.status", "value": "stabilized" },
+      "badge_awarded": {
+        "name": "Crisis Navigator",
+        "description": "Completed emergency stabilization plan",
+        "icon": "compass"
+      }
+    }
+  ]
+}

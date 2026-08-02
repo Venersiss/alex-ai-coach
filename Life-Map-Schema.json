@@ -1,0 +1,96 @@
+{
+  "_note": "Persisted per user. Updated every session. Never deleted.",
+
+  "version": 1,
+
+  "profile": {
+    "age": "number | null",
+    "state": "string | null",
+    "is_minor": "boolean",
+    "phone_working": "boolean | null"
+  },
+
+  "crisis": {
+    "status": "'active' | 'stabilized' | 'resolved' | null",
+    "trigger_event": "'kicked_out' | 'ran_away' | 'evicted' | 'other' | null",
+    "in_danger": "boolean | null",
+    "immediate_shelter": "'yes' | 'no' | null",
+    "has_idsafe": "boolean | null",
+    "liquid_cash": "number | null",
+    "transportation": "'Car' | 'Bus pass' | 'Bike' | 'None' | 'Friends can drive' | null",
+    "has_bank_account": "boolean | null",
+    "hotline_contacted": "boolean | null",
+    "first_alerted_at": "ISO timestamp | null",
+    "stabilized_at": "ISO timestamp | null"
+  },
+
+  "employment": {
+    "has_job": "boolean",
+    "current_job_title": "string | null",
+    "hourly_wage": "number | null",
+    "hours_per_week": "number | null",
+    "job_history": ["string"],
+    "skills": ["string"],
+    "income_lane_chosen": "'gig' | 'quick_hire' | 'stable_fulltime' | null"
+  },
+
+  "education": {
+    "level": "'Some high school' | 'High school diploma/GED' | 'Some college' | \"Associate's\" | \"Bachelor's+\" | null",
+    "in_school": "boolean",
+    "school_name": "string | null",
+    "gpa": "number | null",
+    "interested_in": ["string"],
+    "ged_in_progress": "boolean | null"
+  },
+
+  "housing": {
+    "current_situation": "'shelter' | 'host_home' | 'roommate' | 'own_lease' | 'car' | 'street' | 'other' | null",
+    "path_chosen": "'shelter' | 'rapid_rehousing' | 'couch_surf' | 'roommates' | 'own_rental' | null",
+    "lease_ready_score": "number 0-100 | null",
+    "security_deposit_saved": "number | null",
+    "eviction_record": "boolean | null"
+  },
+
+  "plan": {
+    "72hr_started_at": "ISO timestamp | null",
+    "72hr_completed_at": "ISO timestamp | null",
+    "72hr_tasks_completed": "number 0-8",
+    "employment_started_at": "ISO timestamp | null",
+    "employment_goal_set": "string | null",
+    "housing_started_at": "ISO timestamp | null",
+    "next_check_in": "ISO timestamp | null"
+  },
+
+  "badges": [
+    {
+      "name": "'Crisis Navigator'",
+      "earned_at": "ISO timestamp | null",
+      "progress": "number 0-100"
+    }
+  ],
+
+  "premium": {
+    "is_subscribed": "boolean",
+    "subscription_tier": "'free' | 'monthly' | 'annual' | null",
+    "features_unlocked": ["string"],
+    "upgrade_gate_shown_at": "ISO timestamp | null",
+    "upgrade_gate_accepted": "boolean | null"
+  },
+
+  "engagement": {
+    "total_sessions": "number",
+    "last_active_at": "ISO timestamp",
+    "consecutive_days_active": "number",
+    "messages_exchanged": "number",
+    "average_session_length_minutes": "number",
+    "dropped_off_at_step": "string | null",
+    "nudge_count": "number"
+  },
+
+  "consent": {
+    "data_sharing_agreed": "boolean",
+    "mandatory_reporting_acknowledged": "boolean | null",
+    "gdpr_opted_in": "boolean",
+    "opted_out_at": "ISO timestamp | null"
+  }
+}

@@ -1,0 +1,519 @@
+{
+  "_schema": "alex_decision_tree_v2",
+  "_note": "Refined in Session 5 — expanded from 17 to ~25 nodes with individual 12-question framework, cash tiers, transport branches, education path branches, and v2 node fields (tier, why_alex_asks, priority)",
+  "tree_id": "aged_out_foster_care_v2",
+  "title": "Aged Out of Foster Care — Independent Living Transition (Session 5 Refined)",
+  "trigger_phrases": [
+    "aged out",
+    "foster care",
+    "foster kid",
+    "turned 18 foster",
+    "transitioning out",
+    "leaving foster",
+    "foster youth",
+    "cps",
+    "group home",
+    "foster home"
+  ],
+  "freemium": true,
+  "root_node": "q1_danger",
+
+  "nodes": [
+    {
+      "id": "q1_danger",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Aging out is a huge transition. You don't have to figure this out alone. First, let me make sure you're safe: Are you in physical danger right now?",
+      "options": [
+        { "label": "Yes", "next_node": "msg_hotlines" },
+        { "label": "No", "next_node": "q2_shelter" }
+      ],
+      "why_alex_asks": "Physical safety overrides everything. If in danger, coaching stops and crisis resources deploy immediately.",
+      "save_to_life_map": { "field": "crisis.in_danger", "source": "answer" }
+    },
+
+    {
+      "id": "msg_hotlines",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "You matter. Please reach out to one of these right now. I'll wait.\n- 988 Suicide & Crisis Lifeline\n- National Safeline: 1-800-799-7233\n- National Runaway Safeline: 1-800-RUNAWAY\n- Youth Shelter Finder\n\nReply 'done' when you've contacted one.",
+      "resources": [
+        { "label": "988 Suicide & Crisis Lifeline", "url": "tel:988", "type": "hotline" },
+        { "label": "National Safeline", "url": "tel:1-800-799-7233", "type": "hotline" },
+        { "label": "National Runaway Safeline", "url": "tel:1-800-786-2929", "type": "hotline" },
+        { "label": "Youth Shelter Finder", "url": "https://www.youthshelterfinder.org", "type": "web" }
+      ],
+      "wait_for_reply": "done",
+      "next_node": "q2_shelter",
+      "save_to_life_map": { "field": "crisis.hotline_contacted", "value": true }
+    },
+
+    {
+      "id": "q2_shelter",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Do you have a safe place to sleep tonight?",
+      "options": [
+        { "label": "Yes", "next_node": "q3_caseworker" },
+        { "label": "No", "next_node": "msg_shelter_search" },
+        { "label": "Not sure", "next_node": "msg_shelter_search" }
+      ],
+      "why_alex_asks": "Tonight's shelter is the most immediate practical need after physical safety. For foster youth, also introduces THP and extended care options.",
+      "save_to_life_map": { "field": "crisis.immediate_shelter", "source": "answer" }
+    },
+
+    {
+      "id": "msg_shelter_search",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Let's find one now. Use the Youth Shelter Finder below, or reply with your city.\n\nAs someone who aged out, you also have access to:\n- Transitional Housing Programs (THP) — specifically for former foster youth\n- Extended foster care re-entry if you're still eligible (under 21)\n- Independent Living Programs (ILP)\n\nIf you have a car: 24hr Walmart or truck stop lots.\nIf you don't: 24hr diners, hospital waiting rooms.",
+      "resources": [
+        { "label": "Youth Shelter Finder", "url": "https://www.youthshelterfinder.org", "type": "web" },
+        { "label": "Call 211", "url": "tel:211", "type": "hotline" },
+        { "label": "National Foster Youth Institute", "url": "https://www.nfyi.org", "type": "web" }
+      ],
+      "next_node": "q3_caseworker"
+    },
+
+    {
+      "id": "q3_caseworker",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Do you still have contact with your caseworker, ILP coordinator, or anyone from the foster care system?",
+      "options": [
+        { "label": "Yes, I can reach them", "next_node": "q4_extended_care" },
+        { "label": "No, I lost contact", "next_node": "msg_no_caseworker" }
+      ],
+      "why_alex_asks": "The caseworker is the single most important gateway to foster-care benefits (ETV, Chafee, extended care, Medicaid). Without them, these are significantly harder to access. This is the foster-care equivalent of J1's trusted person check.",
+      "save_to_life_map": { "field": "foster.has_caseworker", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "msg_no_caseworker",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "That's common. Let's find them:\n1. Call your state's DCFS/CPS\n2. Ask for the Independent Living Program (ILP) coordinator for your county\n3. Say: 'I recently aged out and need to reconnect with my caseworker or transition services.'\n\nEven if you've been out for months, you still qualify for aftercare services.",
+      "resources": [
+        { "label": "State Child Welfare Agency Directory", "url": "https://www.childwelfare.gov/organizations", "type": "web" },
+        { "label": "National Foster Care Coalition", "url": "https://www.nationalfostercare.org", "type": "web" }
+      ],
+      "next_node": "q4_extended_care"
+    },
+
+    {
+      "id": "q4_extended_care",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Are you under 21? Many states allow you to stay in or re-enter foster care until 21, with full housing, monthly stipend, and Medicaid until 26. This could change everything.",
+      "options": [
+        { "label": "Yes, I'm under 21", "next_node": "msg_extended_care" },
+        { "label": "No, I'm 21 or older", "next_node": "q5_id" }
+      ],
+      "why_alex_asks": "This is the single most impactful question in this journey. Extended care provides housing, stipend, caseworker, and Medicaid — changing the entire coaching trajectory. Replaces J1's minor protocol.",
+      "save_to_life_map": { "field": "foster.extended_care_eligible", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "msg_extended_care",
+      "type": "message",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "You may be eligible to stay in or re-enter foster care. This means:\n- Housing in a foster home or supervised apartment\n- Monthly living stipend\n- Caseworker support\n- Medicaid until 26\n\nTo start: contact your state's DCFS and say 'I aged out and want to know about extended foster care options.' If you already have a caseworker, ask them directly.\n\nReply 'ready' when you want to continue.",
+      "resources": [
+        { "label": "Extended Foster Care — State Guide", "url": "https://www.childwelfare.gov/topics/outofhome/foster-care/extended-foster-care", "type": "web" },
+        { "label": "FosterClub — Transition Resources", "url": "https://www.fosterclub.com", "type": "web" }
+      ],
+      "wait_for_reply": "ready",
+      "next_node": "q5_id"
+    },
+
+    {
+      "id": "q5_id",
+      "type": "question",
+      "priority": 1,
+      "tier": "crisis",
+      "speaker": "alex",
+      "text": "Do you have any form of ID on you? (Driver's license, birth certificate, social security card, school ID, state ID)",
+      "options": [
+        { "label": "Yes, at least one", "next_node": "q6_phone" },
+        { "label": "No, nothing", "next_node": "msg_id_replacement" }
+      ],
+      "why_alex_asks": "Without ID, every service (ETV, SNAP, Medicaid, jobs, bank, housing) becomes inaccessible. Foster youth may have birth certificates in state records.",
+      "save_to_life_map": { "field": "crisis.has_idsafe", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "msg_id_replacement",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "That's okay, we can replace them. As a former foster youth, some states give you a free state ID.\n\n1. Birth cert — may be in your foster records (ask caseworker first)\n2. State ID card — ask DMV about fee waiver for foster youth\n3. Social Security card — ssa.gov (free)\n\nReply with your state and I'll give you the exact links.",
+      "resources": [
+        { "label": "Social Security Card Replacement", "url": "https://www.ssa.gov/myaccount", "type": "web" },
+        { "label": "State Vital Records", "url": "https://www.cdc.gov/nchs/w2w/index.htm", "type": "web" },
+        { "label": "Find your DMV", "url": "https://www.dmv.org", "type": "web" }
+      ],
+      "next_node": "q6_phone"
+    },
+
+    {
+      "id": "q6_phone",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Is your phone working with service?",
+      "options": [
+        { "label": "Yes", "next_node": "q7_money" },
+        { "label": "No", "next_node": "msg_phone_help" }
+      ],
+      "why_alex_asks": "Disconnected phone = can't call caseworker, apply for benefits, reach shelters, or contact DCFS offices.",
+      "save_to_life_map": { "field": "crisis.has_phone", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "msg_phone_help",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "No problem — here are free options:\n- Lifeline program: free government phone for qualified individuals\n- TextNow or Google Voice: free number over WiFi\n- Public library computers for essential applications\n\nLet's make sure you have a way to reach services.",
+      "resources": [
+        { "label": "Lifeline — Free Government Phone", "url": "https://www.lifelinesupport.org", "type": "web" },
+        { "label": "TextNow", "url": "https://www.textnow.com", "type": "web" }
+      ],
+      "next_node": "q7_money"
+    },
+
+    {
+      "id": "q7_money",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "How much money do you have right now?",
+      "options": [
+        { "label": "$0", "next_node": "msg_cash_tier_zero" },
+        { "label": "$1 - $100", "next_node": "msg_cash_tier_low" },
+        { "label": "$100+", "next_node": "msg_cash_tier_stable" }
+      ],
+      "why_alex_asks": "Determines immediate survival window. ETV/Chafee funds take weeks — not immediate cash. $0 means same-day cash priority.",
+      "cash_tier": {
+        "source": "user_selection",
+        "save_to_life_map": "crisis.liquid_cash"
+      }
+    },
+
+    {
+      "id": "msg_cash_tier_zero",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "I hear you. Same-day cash is the priority. Options:\n- Plasma donation center (same-day payment, $30-60 per visit)\n- Day labor / temp agency (same-day pay at some)\n- Gig apps if you have transport (DoorDash, Instacart)\n- Sell items on Facebook Marketplace or OfferUp\n\nETV and Chafee funds take a few weeks — right now, let's get something for food and essentials today.",
+      "next_node": "q8_transport"
+    },
+
+    {
+      "id": "msg_cash_tier_low",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Okay, you have a small buffer. Let's stretch it: food and shelter first, skip non-essentials. Benefits (SNAP, ETV) will take a few days — this buys us time.",
+      "next_node": "q8_transport"
+    },
+
+    {
+      "id": "msg_cash_tier_stable",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Good, you have some breathing room. We can focus on long-term stability — benefits enrollment, education path, and career planning. Start saving what you can.",
+      "next_node": "q8_transport"
+    },
+
+    {
+      "id": "q8_transport",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "What transportation do you have?",
+      "options": [
+        { "label": "Car", "next_node": "q9_job" },
+        { "label": "Bus pass / Bike", "next_node": "q9_job" },
+        { "label": "None", "next_node": "q9_job" },
+        { "label": "Friends can drive", "next_node": "q9_job" }
+      ],
+      "why_alex_asks": "Dictates ability to reach DCFS offices, benefits appointments, job interviews, and shelters. Car = full mobility, Bus/Bike = limited radius, None = remote + walkable only.",
+      "save_to_life_map": { "field": "crisis.transportation", "source": "answer" }
+    },
+
+    {
+      "id": "q9_job",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Are you currently working?",
+      "options": [
+        { "label": "Yes", "next_node": "q10_bank" },
+        { "label": "No", "next_node": "q10_bank" }
+      ],
+      "why_alex_asks": "Determines whether employment path is needed or just job preservation. Foster youth job programs available either way.",
+      "save_to_life_map": { "field": "employment.has_job", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "q10_bank",
+      "type": "question",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "Do you have a bank account?",
+      "options": [
+        { "label": "Yes", "next_node": "q11_city" },
+        { "label": "No", "next_node": "msg_no_bank" }
+      ],
+      "why_alex_asks": "Required for direct deposit, ETV/Chafee benefit payments, and financial independence. Some credit unions offer special accounts for foster youth.",
+      "save_to_life_map": { "field": "crisis.has_bank_account", "source": "answer_is_yes" }
+    },
+
+    {
+      "id": "msg_no_bank",
+      "type": "message",
+      "priority": 2,
+      "tier": "assessment",
+      "speaker": "alex",
+      "text": "No worries — let's add this to your plan. Options:\n- Chime (no fees, online)\n- Capital One 360 (no fees, online)\n- Local credit union (some offer foster youth accounts)\n\nYou'll need this for ETV and Chafee payments and direct deposit from a job.",
+      "resources": [
+        { "label": "Chime", "url": "https://www.chime.com", "type": "web" },
+        { "label": "Capital One 360", "url": "https://www.capitalone.com/bank", "type": "web" }
+      ],
+      "next_node": "q11_city"
+    },
+
+    {
+      "id": "q11_city",
+      "type": "question",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "What city and state are you in? (I never store your exact address — just city and state to find local resources.)",
+      "options": [],
+      "why_alex_asks": "All resources are location-dependent — THP programs, DCFS offices, ETV contacts, state tuition waivers, and transitional housing are all state-specific.",
+      "save_to_life_map": [
+        { "field": "profile.city", "source": "answer" },
+        { "field": "profile.state", "source": "answer" }
+      ],
+      "next_node": "q12_education"
+    },
+
+    {
+      "id": "q12_education",
+      "type": "question",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "What's your education level, and what's your next step?",
+      "options": [
+        { "label": "In college now", "next_node": "msg_edu_college" },
+        { "label": "HS diploma / GED — want college", "next_node": "msg_edu_college_path" },
+        { "label": "HS diploma / GED — want trade school", "next_node": "msg_edu_trade" },
+        { "label": "HS diploma / GED — want job now", "next_node": "msg_edu_job" },
+        { "label": "No diploma / GED yet", "next_node": "msg_edu_ged" }
+      ],
+      "why_alex_asks": "Education is the single biggest advantage for former foster youth — ETV vouchers ($5k/yr), state tuition waivers (free college in many states), and FAFSA independent status. This determines which education path to deploy.",
+      "save_to_life_map": [
+        { "field": "education.level", "source": "answer" },
+        { "field": "education.education_path", "source": "answer" }
+      ]
+    },
+
+    {
+      "id": "msg_edu_college",
+      "type": "message",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "Great — let's make sure your funding is secure. Verify:\n- ETV voucher is active (reapply each year)\n- FAFSA is filed as independent student\n- State tuition waiver is applied\n- Campus foster youth support program\n\nIf any of these are missing, we'll add them to your plan.",
+      "next_node": "plan_benefits"
+    },
+
+    {
+      "id": "msg_edu_college_path",
+      "type": "message",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "College is a great path, and you have advantages most students don't:\n- ETV voucher: up to $5,000/year\n- State tuition waiver: free tuition at public colleges in many states\n- FAFSA as independent: maximum aid eligibility\n- Campus foster youth programs: priority housing, mentoring, emergency funds\n\nStart with community college — cheaper, easier admission, transfer to university later.",
+      "next_node": "plan_benefits"
+    },
+
+    {
+      "id": "msg_edu_trade",
+      "type": "message",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "Trade school is a smart, fast path to good income. ETV covers vocational programs — electrical, plumbing, HVAC, welding, medical tech. Many apprenticeships pay you while you learn.\n\nCheck: Apprenticeship.gov for paid training programs in your area.",
+      "next_node": "plan_benefits"
+    },
+
+    {
+      "id": "msg_edu_job",
+      "type": "message",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "Going straight to work is valid. You can always use ETV later (good until age 26). For now, let's focus on:\n- Foster youth job placement programs\n- Apprenticeships with paid training\n- Temp agencies for quick placement\n\nKeep ETV in your back pocket — you have years to use it.",
+      "next_node": "plan_benefits"
+    },
+
+    {
+      "id": "msg_edu_ged",
+      "type": "message",
+      "priority": 3,
+      "tier": "context",
+      "speaker": "alex",
+      "text": "Let's get your GED first. Good news: most states offer it free for foster youth. ETV can cover GED prep programs. Once you have it, all the college/trade options open up.\n\nAlso consider Job Corps (16-24) — free housing, food, GED classes, and job training all in one program.",
+      "resources": [
+        { "label": "GED Program Finder", "url": "https://ged.com", "type": "web" },
+        { "label": "Job Corps", "url": "https://www.jobcorps.gov", "type": "web" }
+      ],
+      "next_node": "plan_benefits"
+    },
+
+    {
+      "id": "plan_benefits",
+      "type": "action_plan",
+      "priority": 2,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "These are programs specifically for former foster youth. Most people your age don't have access to this. Let's get every one:\n\nReply 'done [task]' as you complete each one.",
+      "tasks": [
+        { "day": 1, "task": "Contact caseworker or ILP coordinator (or call DCFS to reconnect)", "condition": "foster.has_caseworker == false" },
+        { "day": 1, "task": "Check extended foster care eligibility — call DCFS and ask to re-enter", "condition": "foster.extended_care_eligible == true" },
+        { "day": 2, "task": "Apply for ETV (Education and Training Voucher) — up to $5,000/year", "resource": { "label": "ETV Program", "url": "https://www.childwelfare.gov/topics/outofhome/foster-care/education/etv" } },
+        { "day": 2, "task": "Apply for Chafee Foster Care Independence Program", "resource": { "label": "Chafee Program", "url": "https://www.acf.hhs.gov/cb/faq/foster-care-independence-acts" } },
+        { "day": 2, "task": "Verify Medicaid coverage (extends to age 26 for former foster youth)", "resource": { "label": "Medicaid for Foster Youth", "url": "https://www.medicaid.gov/medicaid/benefits/former-foster-care-children/index.html" } },
+        { "day": 3, "task": "Apply for SNAP (food assistance)", "resource": { "label": "SNAP state finder", "url": "https://www.fns.usda.gov/snap/state-directory" } },
+        { "day": 5, "task": "Open a free bank account", "resource": { "label": "Chime", "url": "https://www.chime.com" }, "condition": "crisis.has_bank_account == false" }
+      ],
+      "next_node": "plan_housing",
+      "save_to_life_map": { "field": "plan.benefits_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "plan_housing",
+      "type": "action_plan",
+      "priority": 3,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Housing for former foster youth — from fastest to most stable:",
+      "tasks": [
+        { "day": "immediate", "task": "Emergency youth shelter (tonight)", "resource": { "label": "Youth Shelter Finder", "url": "https://www.youthshelterfinder.org" } },
+        { "day": "week_1", "task": "Contact THP (Transitional Housing Program) — state-funded for former foster youth", "resource": { "label": "THP Programs", "url": "https://www.childwelfare.gov/topics/outofhome/foster-care/transitional-living" } },
+        { "day": "week_1", "task": "Enroll in ILP (Independent Living Program) — through age 21-23", "condition": "foster.extended_care_eligible == true" },
+        { "day": "week_1", "task": "Re-enter extended foster care — full housing through age 21", "condition": "foster.extended_care_eligible == true" },
+        { "day": "week_2", "task": "Apply for HUD FUP voucher — housing vouchers for youth aging out", "resource": { "label": "HUD FUP", "url": "https://www.hud.gov/program_offices/public_indian_housing/programs/hcv/fup" } },
+        { "day": "week_2", "task": "Apply for Job Corps (16-24) — housing + food + GED + job training", "resource": { "label": "Job Corps", "url": "https://www.jobcorps.gov" } },
+        { "day": "month_1", "task": "Find roommates", "resource": { "label": "Roomster", "url": "https://www.roomster.com" } },
+        { "day": "month_2+", "task": "Own rental — requires income, deposit, credit check", "resource_node": "premium_lease_ready", "premium": true }
+      ],
+      "next_node": "plan_employment",
+      "save_to_life_map": { "field": "plan.housing_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "plan_employment",
+      "type": "action_plan",
+      "priority": 3,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Income plan — pick the lane that fits your situation:",
+      "tasks": [
+        { "day": "immediate", "task": "Same-day cash: plasma donation, day labor, sell items", "condition": "crisis.liquid_cash <= 0" },
+        { "day": "immediate", "task": "Gig apps (DoorDash, Instacart, TaskRabbit)", "condition": "crisis.transportation == Car" },
+        { "day": "immediate", "task": "Remote gigs (UserTesting, Fiverr) — no car needed", "condition": "crisis.transportation != Car" },
+        { "day": 7, "task": "Walk into temp agency — same-week start", "resource": { "label": "Temp agencies", "url": "https://www.tempagency.com" } },
+        { "day": 7, "task": "Apply at restaurants, retail, hospitality", "condition": "crisis.transportation != None" },
+        { "day": 14, "task": "Foster youth employment programs — state-specific job placement", "resource": { "label": "Youth.gov Employment", "url": "https://youth.gov/youth-topics/employment" } },
+        { "day": 30, "task": "Full-time with benefits — requires ID + bank account", "condition": "crisis.has_idsafe == true AND crisis.has_bank_account == true" }
+      ],
+      "next_node": "plan_education",
+      "save_to_life_map": { "field": "plan.employment_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "plan_education",
+      "type": "action_plan",
+      "priority": 3,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "Education is your biggest advantage as a former foster youth. Here's your roadmap:",
+      "tasks": [
+        { "day": "week_1", "task": "Apply for ETV voucher (if not already done) — up to $5,000/year", "resource": { "label": "ETV Application", "url": "https://www.childwelfare.gov/topics/outofhome/foster-care/education/etv" } },
+        { "day": "week_1", "task": "Check state tuition waiver — free tuition at public colleges in many states", "resource": { "label": "FC2S — Tuition Waiver Finder", "url": "https://www.fc2success.org" } },
+        { "day": "week_2", "task": "Complete FAFSA as independent student (more aid)", "resource": { "label": "FAFSA", "url": "https://studentaid.gov/h/apply-for-aid/fafsa" } },
+        { "day": "week_2", "task": "Enroll in GED if needed (free in most states for foster youth)", "condition": "education.level == Some high school", "resource": { "label": "GED", "url": "https://ged.com" } },
+        { "day": "month_1", "task": "Apply to community college — mention ETV + tuition waiver to admissions", "condition": "education.education_path == college", "resource": { "label": "Community College Finder", "url": "https://www.aacc.nche.edu" } },
+        { "day": "month_1", "task": "Research trade apprenticeships (paid training)", "condition": "education.education_path == trade_school", "resource": { "label": "Apprenticeship.gov", "url": "https://www.apprenticeship.gov" } },
+        { "day": "month_2", "task": "Apply to 4-year university + campus foster youth support program", "condition": "education.education_path == college", "resource_node": "premium_college_app", "premium": true }
+      ],
+      "next_node": "gate_upgrade",
+      "save_to_life_map": { "field": "plan.education_started", "value": true, "timestamp": true }
+    },
+
+    {
+      "id": "gate_upgrade",
+      "type": "upgrade_gate",
+      "priority": 3,
+      "tier": "premium",
+      "speaker": "alex",
+      "text": "You've got a solid plan — benefits, housing, income, education. I want to keep helping you.\n\nHere's what's free vs. premium:",
+      "free_continues": "plan_ongoing",
+      "premium_features": [
+        { "id": "premium_caseworker_coach", "label": "Caseworker communication coach", "description": "Scripts for advocating for yourself, fast-tracking benefits" },
+        { "id": "premium_lease_ready", "label": "Lease-readiness + landlord coach", "description": "Build credit, practice landlord conversations, review applications" },
+        { "id": "premium_college_app", "label": "College & FAFSA walkthrough", "description": "Step-by-step application help, essays, financial aid, campus programs" },
+        { "id": "premium_career_mentor", "label": "Career mentorship matching", "description": "Former foster youth mentors who've been through this" }
+      ],
+      "upgrade_node": "premium_welcome"
+    },
+
+    {
+      "id": "plan_ongoing",
+      "type": "message",
+      "priority": 4,
+      "tier": "plan",
+      "speaker": "alex",
+      "text": "You're on your way. I've saved your Life Map and we'll check in weekly.\n\nYou'll get:\n- Weekly progress prompts\n- Badge tracking: 'Independent Navigator' — completing your first benefits application\n- New journeys as needed (budgeting, career launch, college prep)\n\nAging out is not a failure — it's a transition. You have programs, benefits, and people dedicated to your success. You have options, and you have me.\n\nReply 'check-in' anytime.",
+      "save_to_life_map": { "field": "crisis.status", "value": "stabilized" },
+      "badge_awarded": {
+        "name": "Independent Navigator",
+        "description": "Completed transition plan with benefits, housing, income, and education paths mapped",
+        "icon": "map",
+        "criteria": "All 4 action plans reviewed"
+      }
+    }
+  ]
+}
